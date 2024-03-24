@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    workspace:
+        build:
+            context: .
+            dockerfile: ./Docker/Dockerfile
+        container_name: news
+        working_dir: /var/www/html
+        ports:
+            - "80:80"
+        volumes:
+            - .:/var/www/html
+            - ./Docker/nginx_log:/var/log/nginx
+            - ./Docker/php-fpm/php-fpm.log:/var/log/php-fpm.log
+            - ./Docker/config/app.conf:/etc/nginx/conf.d/app.conf
+        links:
+            - mysql
+
+    mysql:
+        image: mysql:8.0
+        container_name: news_mysql
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./Docker/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: password
